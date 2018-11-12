@@ -5,6 +5,7 @@ Double=23.1
 Bool=$true
 }
 
+
 $TestObjectB= [PSCustomObject]@{
 String=[string]
 Int = [int]
@@ -12,7 +13,7 @@ Double=[double]
 Bool=[bool]
 datetime=[datetime]
 }
-
+#This is a test
 
 function Get-PSObjectParamTypes(){
 param(
