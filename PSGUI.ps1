@@ -60,20 +60,22 @@ function Show-Psgui () {
 			{
 				New-Variable -Name "Checkbox_$($np.Name)" -Value (New-Object system.Windows.Forms.CheckBox)
 				(Get-Variable -Name "Checkbox_$($np.Name)")
-				(Get-Variable -Name "Checkbox_$($np.Name)").text = "checkBox"
+				(Get-Variable -Name "Checkbox_$($np.Name)").text = "$($np.Name)"
 				(Get-Variable -Name "Checkbox_$($np.Name)").AutoSize = $false
 				(Get-Variable -Name "Checkbox_$($np.Name)").width = 95
 				(Get-Variable -Name "Checkbox_$($np.Name)").height = 20
 				(Get-Variable -Name "Checkbox_$($np.Name)").location = New-Object System.Drawing.Point ($currentX,$currentY)
 				(Get-Variable -Name "Checkbox_$($np.Name)").Font = 'Microsoft Sans Serif,10'
+				$Form.controls.AddRange(@((Get-Variable -Name "Checkbox_$($np.Name)")))
 			}
 
 
 
 		}
+
 		$currentX += 25
 
 	}
 
-
+	[void]$Form.ShowDialog()
 }
