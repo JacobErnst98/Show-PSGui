@@ -10,12 +10,14 @@
 	Double = 23.1
 	Bool = $true
 	Boolongername = $true
+	datetimeTYPE = [datetime]
+	datetimeEX = [datetime]"Tuesday, January 3, 2017 1:59:11 AM"
 	Char = [char]"A"
 	longo = [long]123456789012345678
 	weird = [System.Windows.Forms.PictureBoxSizeMode]
+	GUID = New-Guid
+	sid = Get-ADUser -Identity 'zachary.fischer' | Select-Object SID
 }
-
-
 
 $TestObjectB = [pscustomobject]@{
 	String = [string]
@@ -53,6 +55,7 @@ function Show-Psgui () {
 		[int]$width = 600,
 		[string]$font = 'Microsoft Sans Serif,10'
 	)
+	$tmpobj = $object
 	$Form = New-Object system.Windows.Forms.Form
 	#TODO automate width and height
 	$Form.ClientSize = "$width,$height"
@@ -89,7 +92,7 @@ function Show-Psgui () {
 
 
 				#add field to form
-				$fields += ((Get-Variable -Name "Checkbox_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "CheckBox"; Name = "$($np.Name)"; object = ((Get-Variable -Name "CheckBox_$($np.Name)").Value) }
 				$currentY = ((Get-Variable -Name "Checkbox_$($np.Name)").Value.height + (Get-Variable -Name "Checkbox_$($np.Name)").Value.location.y) + 5
 
 				if ($maxFieldWidths -lt ((Get-Variable -Name "Checkbox_$($np.Name)").Value.width + (Get-Variable -Name "Checkbox_$($np.Name)").Value.location.x)) {
@@ -109,7 +112,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "Label_$($np.Name)").Value.width = $labelwidth
 				(Get-Variable -Name "Label_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height)
 				#add field to form
-				$fields += ((Get-Variable -Name "Label_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "Label"; Name = "$($np.Name)"; object = ((Get-Variable -Name "Label_$($np.Name)").Value) }
 
 
 
@@ -150,7 +153,7 @@ function Show-Psgui () {
 				}
 
 				#add textbox to form
-				$fields += ((Get-Variable -Name "TextBox_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "TextBox"; Name = "$($np.Name)"; object = ((Get-Variable -Name "TextBox_$($np.Name)").Value) }
 
 
 				if ($maxFieldWidths -lt ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x)) {
@@ -173,7 +176,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "Label_$($np.Name)").Value.width = $labelwidth
 				(Get-Variable -Name "Label_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height)
 				#add field to form
-				$fields += ((Get-Variable -Name "Label_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "Label"; Name = "$($np.Name)"; object = ((Get-Variable -Name "Label_$($np.Name)").Value) }
 
 
 
@@ -198,7 +201,7 @@ function Show-Psgui () {
 				}
 
 				#add textbox to form
-				$fields += ((Get-Variable -Name "TextBox_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "TextBox"; Name = "$($np.Name)"; object = ((Get-Variable -Name "TextBox_$($np.Name)").Value) }
 
 
 				if ($maxFieldWidths -lt ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x)) {
@@ -220,7 +223,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "Label_$($np.Name)").Value.width = $labelwidth
 				(Get-Variable -Name "Label_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height)
 				#add field to form
-				$fields += ((Get-Variable -Name "Label_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "Label"; Name = "$($np.Name)"; object = ((Get-Variable -Name "Label_$($np.Name)").Value) }
 
 
 
@@ -261,7 +264,7 @@ function Show-Psgui () {
 				}
 
 				#add textbox to form
-				$fields += ((Get-Variable -Name "TextBox_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "TextBox"; Name = "$($np.Name)"; object = ((Get-Variable -Name "TextBox_$($np.Name)").Value) }
 
 
 				if ($maxFieldWidths -lt ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x)) {
@@ -283,7 +286,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "Label_$($np.Name)").Value.width = $labelwidth
 				(Get-Variable -Name "Label_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height)
 				#add field to form
-				$fields += ((Get-Variable -Name "Label_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "Label"; Name = "$($np.Name)"; object = ((Get-Variable -Name "Label_$($np.Name)").Value) }
 
 
 
@@ -324,7 +327,7 @@ function Show-Psgui () {
 				}
 
 				#add textbox to form
-				$fields += ((Get-Variable -Name "TextBox_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "TextBox"; Name = "$($np.Name)"; object = ((Get-Variable -Name "TextBox_$($np.Name)").Value) }
 
 
 				if ($maxFieldWidths -lt ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x)) {
@@ -346,7 +349,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "Label_$($np.Name)").Value.width = $labelwidth
 				(Get-Variable -Name "Label_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height)
 				#add field to form
-				$fields += ((Get-Variable -Name "Label_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "Label"; Name = "$($np.Name)"; object = ((Get-Variable -Name "Label_$($np.Name)").Value) }
 
 
 
@@ -387,13 +390,64 @@ function Show-Psgui () {
 				}
 
 				#add textbox to form
-				$fields += ((Get-Variable -Name "TextBox_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "TextBox"; Name = "$($np.Name)"; object = ((Get-Variable -Name "TextBox_$($np.Name)").Value) }
 
 
 				if ($maxFieldWidths -lt ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x)) {
 					$maxFieldWidths = ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x) + 15
 				}
 				$currentY = ((Get-Variable -Name "TextBox_$($np.Name)").Value.height + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.y) + 5
+
+			}
+			datetime {
+				#Create Label field for the string input
+				New-Variable -Name "Label_$($np.Name)" -Value (New-Object system.Windows.Forms.Label)
+				(Get-Variable -Name "Label_$($np.Name)").Value.text = "[$($np.Type)] $($np.Name)"
+				(Get-Variable -Name "Label_$($np.Name)").Value.AutoSize = $false
+				(Get-Variable -Name "Label_$($np.Name)").Value.location = New-Object System.Drawing.Point ($currentX,$currentY)
+				(Get-Variable -Name "Label_$($np.Name)").Value.Font = 'Microsoft Sans Serif,10'
+
+				#size field
+				$FontSize = Get-ObjectSize -control ((Get-Variable -Name "Label_$($np.Name)").Value)
+				(Get-Variable -Name "Label_$($np.Name)").Value.width = $labelwidth
+				(Get-Variable -Name "Label_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height)
+				#add field to form
+
+				$fields += $getfixobj = [pscustomobject]@{ type = "Label"; Name = "$($np.Name)"; object = ((Get-Variable -Name "Label_$($np.Name)").Value) }
+
+
+
+				#Get Position of textbox after label
+				$tmpX = $currentX + (Get-Variable -Name "Label_$($np.Name)").Value.width + 5
+
+				#create Textbox element
+				New-Variable -Name "DateTimePicker_$($np.Name)" -Value (New-Object System.Windows.Forms.DateTimePicker)
+				(Get-Variable -Name "DateTimePicker_$($np.Name)").Value.location = New-Object System.Drawing.Point ($tmpX,$currentY)
+				(Get-Variable -Name "DateTimePicker_$($np.Name)").Value.Font = 'Microsoft Sans Serif,10'
+				try { $basedatetime = [datetime]"$($object."$($np.Name)")" }
+				catch { $basedatetime = Get-Date }
+				(Get-Variable -Name "DateTimePicker_$($np.Name)").Value.text = $basedatetime
+				(Get-Variable -Name "DateTimePicker_$($np.Name)").Value.width = 200
+				(Get-Variable -Name "DateTimePicker_$($np.Name)").Value.Format = "Custom"
+				(Get-Variable -Name "DateTimePicker_$($np.Name)").Value.CustomFormat = "MM/dd/yyyy hh:mm:ss";
+
+				if ($FontSize.height -lt 20)
+				{
+					(Get-Variable -Name "DateTimePicker_$($np.Name)").Value.height = 20
+				}
+				else {
+					(Get-Variable -Name "DateTimePicker_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height) + 3 + ([math]::Ceiling($FontSize.height / 2))
+				}
+
+				#add textbox to form
+				$fields += $getfixobj = [pscustomobject]@{ type = "DateTimePicker"; Name = "$($np.Name)"; object = ((Get-Variable -Name "DateTimePicker_$($np.Name)").Value) }
+
+
+				if ($maxFieldWidths -lt ((Get-Variable -Name "DateTimePicker_$($np.Name)").Value.width + (Get-Variable -Name "DateTimePicker_$($np.Name)").Value.location.x)) {
+					$maxFieldWidths = ((Get-Variable -Name "DateTimePicker_$($np.Name)").Value.width + (Get-Variable -Name "DateTimePicker_$($np.Name)").Value.location.x) + 15
+				}
+				$currentY = ((Get-Variable -Name "DateTimePicker_$($np.Name)").Value.height + (Get-Variable -Name "DateTimePicker_$($np.Name)").Value.location.y) + 5
+
 
 			}
 			default {
@@ -409,7 +463,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "Label_$($np.Name)").Value.width = $labelwidth
 				(Get-Variable -Name "Label_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height)
 				#add field to form
-				$fields += ((Get-Variable -Name "Label_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "Label"; Name = "$($np.Name)"; object = ((Get-Variable -Name "Label_$($np.Name)").Value) }
 
 
 
@@ -434,7 +488,8 @@ function Show-Psgui () {
 				}
 
 				#add textbox to form
-				$fields += ((Get-Variable -Name "TextBox_$($np.Name)").Value)
+				#$fields += ((Get-Variable -Name "TextBox_$($np.Name)").Value)
+				$fields += $getfixobj = [pscustomobject]@{ type = "TextBox"; Name = "$($np.Name)"; object = ((Get-Variable -Name "TextBox_$($np.Name)").Value) }
 
 
 				if ($maxFieldWidths -lt ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x)) {
@@ -447,13 +502,16 @@ function Show-Psgui () {
 		}
 
 	}
+
 	$form.text = "Input"
 	$Form.width = $maxFieldWidths + 30
 	$Form.height = $currentY + 50
-	$form.Controls.AddRange($fields)
+	$form.Controls.AddRange($fields.object)
+	$form.Add_FormClosed({
+			$Global:ta = $fields
+		})
 	[void]$Form.ShowDialog()
 }
-
 
 #private
 function Get-ObjectSize () {
@@ -469,8 +527,8 @@ function Get-ObjectSize () {
 #private
 function Get-StringSize () {
 	param(
-		[Parameter(Mandatory = $true)] [string]$String,
-		[Parameter(Mandatory = $true)] [string]$Font
+		[Parameter(mandatory = $true)] [string]$String,
+		[Parameter(mandatory = $true)] [string]$Font
 	)
 	Add-Type -Assembly System.Drawing
 	$BlankImage = New-Object System.Drawing.Bitmap (500,500)
