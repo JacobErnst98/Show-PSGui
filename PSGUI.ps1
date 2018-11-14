@@ -1,5 +1,4 @@
-﻿
-$TestObject = [pscustomobject]@{
+﻿$TestObject = [pscustomobject]@{
 	String = "test"
 	multi = "test `n multiline"
 	Stringb = "test"
