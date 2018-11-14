@@ -55,7 +55,7 @@ function Show-Psgui () {
 		[int]$width = 600,
 		[string]$font = 'Microsoft Sans Serif,10'
 	)
-	$tmpobj = $object
+	$tmpobj = New-Object pscustomobject
 	$Form = New-Object system.Windows.Forms.Form
 	#TODO automate width and height
 	$Form.ClientSize = "$width,$height"
@@ -76,6 +76,7 @@ function Show-Psgui () {
 
 	foreach ($NP in $NoteProperties)
 	{
+		Add-Member -InputObject $tmpobj -MemberType NoteProperty -Name "$($np.Name)" -Value $object. "$($np.Name)"
 		switch ($NP.type) {
 			bool {
 				New-Variable -Name "Checkbox_$($np.Name)" -Value (New-Object system.Windows.Forms.CheckBox)
@@ -361,7 +362,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.location = New-Object System.Drawing.Point ($tmpX,$currentY)
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.Font = 'Microsoft Sans Serif,10'
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.text = $object. "$($np.Name)"
-				Add-Member -InputObject (Get-Variable -Name "TextBox_$($np.Name)").Value -MemberType NoteProperty -Name LastValid -Value $object . "$($np.Name)"
+				Add-Member -InputObject (Get-Variable -Name "TextBox_$($np.Name)").Value -MemberType NoteProperty -Name LastValid -Value $object. "$($np.Name)"
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.width = 200
 
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.add_TextChanged({
@@ -453,64 +454,77 @@ function Show-Psgui () {
 			default {
 				#Create Label field for the string input
 				New-Variable -Name "Label_$($np.Name)" -Value (New-Object system.Windows.Forms.Label)
-				(Get-Variable -Name "Label_$($np.Name)").Value.text = "[$($np.Type)] $($np.Name)"
-				(Get-Variable -Name "Label_$($np.Name)").Value.AutoSize = $false
+				(Get-Variable -Name "Label_$($np.Name)").Value.text = "[$($np.Type)] $($np.Name)      Unhandled Data TYPE"
+				(Get-Variable -Name "Label_$($np.Name)").Value.AutoSize = $true
 				(Get-Variable -Name "Label_$($np.Name)").Value.location = New-Object System.Drawing.Point ($currentX,$currentY)
 				(Get-Variable -Name "Label_$($np.Name)").Value.Font = 'Microsoft Sans Serif,10'
 
 				#size field
 				$FontSize = Get-ObjectSize -control ((Get-Variable -Name "Label_$($np.Name)").Value)
-				(Get-Variable -Name "Label_$($np.Name)").Value.width = $labelwidth
 				(Get-Variable -Name "Label_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height)
 				#add field to form
 				$fields += $getfixobj = [pscustomobject]@{ type = "Label"; Name = "$($np.Name)"; object = ((Get-Variable -Name "Label_$($np.Name)").Value) }
 
-
-
-				#Get Position of textbox after label
-				$tmpX = $currentX + (Get-Variable -Name "Label_$($np.Name)").Value.width + 5
-
-				#create Textbox element
-				New-Variable -Name "TextBox_$($np.Name)" -Value (New-Object system.Windows.Forms.TextBox)
-				(Get-Variable -Name "TextBox_$($np.Name)").Value.location = New-Object System.Drawing.Point ($tmpX,$currentY)
-				(Get-Variable -Name "TextBox_$($np.Name)").Value.Font = 'Microsoft Sans Serif,10'
-				(Get-Variable -Name "TextBox_$($np.Name)").Value.text = "Unhandled Data TYPE"
-				(Get-Variable -Name "TextBox_$($np.Name)").Value.enabled = $false
-				(Get-Variable -Name "TextBox_$($np.Name)").Value.width = 200
-
-				$FontSize = Get-ObjectSize -control ((Get-Variable -Name "TextBox_$($np.Name)").Value)
-				if ($FontSize.height -lt 20)
-				{
-					(Get-Variable -Name "TextBox_$($np.Name)").Value.height = 20
+				if ($maxFieldWidths -lt ((Get-Variable -Name "Label_$($np.Name)").Value.width + (Get-Variable -Name "Label_$($np.Name)").Value.location.x)) {
+					$maxFieldWidths = ((Get-Variable -Name "Label_$($np.Name)").Value.width + (Get-Variable -Name "Label_$($np.Name)").Value.location.x) + 15
 				}
-				else {
-					(Get-Variable -Name "TextBox_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height) + 3 + ([math]::Ceiling($FontSize.height / 2))
-				}
-
-				#add textbox to form
-				#$fields += ((Get-Variable -Name "TextBox_$($np.Name)").Value)
-				$fields += $getfixobj = [pscustomobject]@{ type = "TextBox"; Name = "$($np.Name)"; object = ((Get-Variable -Name "TextBox_$($np.Name)").Value) }
-
-
-				if ($maxFieldWidths -lt ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x)) {
-					$maxFieldWidths = ((Get-Variable -Name "TextBox_$($np.Name)").Value.width + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.x) + 15
-				}
-				$currentY = ((Get-Variable -Name "TextBox_$($np.Name)").Value.height + (Get-Variable -Name "TextBox_$($np.Name)").Value.location.y) + 5
+				$currentY = ((Get-Variable -Name "Label_$($np.Name)").Value.height + (Get-Variable -Name "Label_$($np.Name)").Value.location.y) + 5
 			}
 
 
 		}
 
 	}
+	$ButtonSave = New-Object system.Windows.Forms.Button
+	$ButtonSave.text = "Save"
+	$ButtonSave.width = 60
+	$ButtonSave.height = 30
+	$ButtonSave.location = New-Object System.Drawing.Point (15,$currentY)
+	$ButtonSave.Font = 'Microsoft Sans Serif,10'
+	$form.Controls.Add($ButtonSave)
+
+	$ButtonCancel = New-Object system.Windows.Forms.Button
+	$ButtonCancel.text = "Cancel"
+	$ButtonCancel.width = 60
+	$ButtonCancel.height = 30
+	$ButtonCancel.location = New-Object System.Drawing.Point (90,$currentY)
+	$ButtonCancel.Font = 'Microsoft Sans Serif,10'
+	$form.Controls.Add($ButtonCancel)
+
 
 	$form.text = "Input"
 	$Form.width = $maxFieldWidths + 30
-	$Form.height = $currentY + 50
+	$Form.height = $currentY + 90
 	$form.Controls.AddRange($fields.object)
-	$form.Add_FormClosed({
-			$Global:ta = $fields
+	$ButtonSave.Add_Click({
+
+			$listOFinputs = $fields | Where-Object { $_.type -ne "Label" }
+			foreach ($field in $listofInputs) {
+
+				switch ($field.type) {
+					CheckBox
+					{
+						$tmpobj. "$($field.Name)" = $field.object.checked
+					}
+					TextBox
+					{
+						$tmpobj. "$($field.Name)" = $field.object.text
+					}
+					DateTimePicker
+					{
+						$tmpobj. "$($field.Name)" = $field.object.text
+					}
+				}
+			}
+			$ButtonSave.text = "Saved"
+			$form.close()
 		})
+	$ButtonCancel.Add_Click({ $form.close() })
+
 	[void]$Form.ShowDialog()
+	if (($ButtonSave.text -eq "Saved")) { return $tmpobj }
+
+
 }
 
 #private
