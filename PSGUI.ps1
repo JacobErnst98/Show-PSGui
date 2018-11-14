@@ -361,7 +361,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.location = New-Object System.Drawing.Point ($tmpX,$currentY)
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.Font = 'Microsoft Sans Serif,10'
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.text = $object. "$($np.Name)"
-				Add-Member -InputObject (Get-Variable -Name "TextBox_$($np.Name)").Value -MemberType NoteProperty -Name LastValid -Value $object. "$($np.Name)"
+				Add-Member -InputObject (Get-Variable -Name "TextBox_$($np.Name)").Value -MemberType NoteProperty -Name LastValid -Value $object . "$($np.Name)"
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.width = 200
 
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.add_TextChanged({
