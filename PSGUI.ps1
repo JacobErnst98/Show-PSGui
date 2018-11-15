@@ -1,4 +1,5 @@
-﻿$TestObject = [pscustomobject]@{
+﻿<#
+$TestObject = [pscustomobject]@{
 	String = "test"
 	multi = "test `n multiline"
 	Stringb = "test"
@@ -27,25 +28,29 @@ $TestObjectB = [pscustomobject]@{
 	datetime = [datetime]
 }
 #This is a test
+#>
 
 #bug with RuntimeTypes
 function Get-PSObjectParamTypes () {
 	param(
-		$Object
+		[Parameter(mandatory = $true)] [object]$Object
 	)
-	$NoteProperties = $object | Get-Member -MemberType NoteProperty
-	foreach ($property in $NoteProperties)
-	{
-		$Pdefinition = $property.Definition.split(" ")
-		$PType = $Pdefinition[0]
-		if ($PType -eq "RuntimeType") {
-			$PType = $Pdefinition[1].split(".",2)[1]
+
+	if ($Object.GetType().BaseType.Name -eq "object") {
+		$NoteProperties = $object | Get-Member -MemberType NoteProperty
+		foreach ($property in $NoteProperties)
+		{
+			$Pdefinition = $property.Definition.split(" ")
+			$PType = $Pdefinition[0]
+			if ($PType -eq "RuntimeType") {
+				$PType = $Pdefinition[1].split(".",2)[1]
+			}
+
+			Add-Member -InputObject $property -MemberType NoteProperty -Name "Type" -Value $PType
 		}
-
-		Add-Member -InputObject $property -MemberType NoteProperty -Name "Type" -Value $PType
+		return $NoteProperties
 	}
-
-	return $NoteProperties
+	return $null
 }
 
 function Show-Psgui () {
@@ -76,7 +81,7 @@ function Show-Psgui () {
 
 	foreach ($NP in $NoteProperties)
 	{
-		Add-Member -InputObject $tmpobj -MemberType NoteProperty -Name "$($np.Name)" -Value $object. "$($np.Name)"
+		Add-Member -InputObject $tmpobj -MemberType NoteProperty -Name "$($np.Name)" -Value ($object. "$($np.Name)")
 		switch ($NP.type) {
 			bool {
 				New-Variable -Name "Checkbox_$($np.Name)" -Value (New-Object system.Windows.Forms.CheckBox)
@@ -362,7 +367,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.location = New-Object System.Drawing.Point ($tmpX,$currentY)
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.Font = 'Microsoft Sans Serif,10'
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.text = $object. "$($np.Name)"
-				Add-Member -InputObject (Get-Variable -Name "TextBox_$($np.Name)").Value -MemberType NoteProperty -Name LastValid -Value $object. "$($np.Name)"
+				Add-Member -InputObject (Get-Variable -Name "TextBox_$($np.Name)").Value -MemberType NoteProperty -Name LastValid -Value $object . "$($np.Name)"
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.width = 200
 
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.add_TextChanged({
