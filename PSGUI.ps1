@@ -58,7 +58,9 @@ function Show-Psgui () {
 		$object,
 		[int]$height = 600,
 		[int]$width = 600,
-		[string]$font = 'Microsoft Sans Serif,10'
+		[string]$font = 'Microsoft Sans Serif,10',
+		[string]$title = "Input",
+		[switch]$showbreak
 	)
 	$tmpobj = New-Object pscustomobject
 	$Form = New-Object system.Windows.Forms.Form
@@ -83,7 +85,7 @@ function Show-Psgui () {
 	{
 		Add-Member -InputObject $tmpobj -MemberType NoteProperty -Name "$($np.Name)" -Value ($object. "$($np.Name)")
 		switch ($NP.type) {
-			bool {
+			{ ($_ -eq "bool") -or ($_ -eq "boolean") } {
 				New-Variable -Name "Checkbox_$($np.Name)" -Value (New-Object system.Windows.Forms.CheckBox)
 				(Get-Variable -Name "Checkbox_$($np.Name)").Value.text = "$($np.Name)"
 				(Get-Variable -Name "Checkbox_$($np.Name)").Value.AutoSize = $false
@@ -497,7 +499,19 @@ function Show-Psgui () {
 	$form.Controls.Add($ButtonCancel)
 
 
-	$form.text = "Input"
+	if ($showbreak) {
+		$ButtonCancelAll = New-Object system.Windows.Forms.Button
+		$ButtonCancelAll.text = "Cancel All"
+		$ButtonCancelAll.width = 60
+		$ButtonCancelAll.height = 40
+		$ButtonCancelAll.location = New-Object System.Drawing.Point (165,$currentY)
+		$ButtonCancelAll.Font = 'Microsoft Sans Serif,10'
+		$form.Controls.Add($ButtonCancelAll)
+
+
+	}
+
+	$form.text = $title
 	$Form.width = $maxFieldWidths + 30
 	$Form.height = $currentY + 90
 	$form.Controls.AddRange($fields.object)
@@ -525,9 +539,11 @@ function Show-Psgui () {
 			$form.close()
 		})
 	$ButtonCancel.Add_Click({ $form.close() })
+	$ButtonCancelAll.Add_Click({ $ButtonSave.text = "Canceled"; $form.close() })
 
 	[void]$Form.ShowDialog()
-	if (($ButtonSave.text -eq "Saved")) { return $tmpobj }
+	if (($ButtonSave.text -eq "Canceled")) { return "Cancel All" }
+	elseif (($ButtonSave.text -eq "Saved")) { return $tmpobj }
 
 
 }
