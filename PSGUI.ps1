@@ -139,6 +139,7 @@ function Show-Psgui () {
 						(Get-Variable -Name "TextBox_$($np.Name)").Value.multiline = $true
 						(Get-Variable -Name "TextBox_$($np.Name)").Value.Scrollbars = "Vertical"
 						(Get-Variable -Name "TextBox_$($np.Name)").Value.text = $object. "$($np.Name)"
+						(Get-Variable -Name "TextBox_$($np.Name)").Value.height = 75
 					}
 					(Get-Variable -Name "TextBox_$($np.Name)").Value.text = $object. "$($np.Name)"
 				}
@@ -152,11 +153,11 @@ function Show-Psgui () {
 				else {
 					(Get-Variable -Name "TextBox_$($np.Name)").Value.width = [math]::Ceiling($FontSize.width) + 10
 				}
-				if ($FontSize.height -lt 20)
+				if ($FontSize.height -lt 20 -and (Get-Variable -Name "TextBox_$($np.Name)").Value.height -lt 20)
 				{
 					(Get-Variable -Name "TextBox_$($np.Name)").Value.height = 20
 				}
-				else {
+				elseif ($FontSize.height -ge 20 -and (Get-Variable -Name "TextBox_$($np.Name)").Value.height -lt 20) {
 					(Get-Variable -Name "TextBox_$($np.Name)").Value.height = [math]::Ceiling($FontSize.height) + 3 + ([math]::Ceiling($FontSize.height / 2))
 				}
 
@@ -369,7 +370,7 @@ function Show-Psgui () {
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.location = New-Object System.Drawing.Point ($tmpX,$currentY)
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.Font = 'Microsoft Sans Serif,10'
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.text = $object. "$($np.Name)"
-				Add-Member -InputObject (Get-Variable -Name "TextBox_$($np.Name)").Value -MemberType NoteProperty -Name LastValid -Value $object . "$($np.Name)"
+				Add-Member -InputObject (Get-Variable -Name "TextBox_$($np.Name)").Value -MemberType NoteProperty -Name LastValid -Value $object. "$($np.Name)"
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.width = 200
 
 				(Get-Variable -Name "TextBox_$($np.Name)").Value.add_TextChanged({
@@ -507,8 +508,7 @@ function Show-Psgui () {
 		$ButtonCancelAll.location = New-Object System.Drawing.Point (165,$currentY)
 		$ButtonCancelAll.Font = 'Microsoft Sans Serif,10'
 		$form.Controls.Add($ButtonCancelAll)
-
-
+		$ButtonCancelAll.Add_Click({ $ButtonSave.text = "Canceled"; $form.close() })
 	}
 
 	$form.text = $title
@@ -539,9 +539,13 @@ function Show-Psgui () {
 			$form.close()
 		})
 	$ButtonCancel.Add_Click({ $form.close() })
-	$ButtonCancelAll.Add_Click({ $ButtonSave.text = "Canceled"; $form.close() })
 
-	[void]$Form.ShowDialog()
+
+	$newThread = [powershell]::Create()
+	$newThread.AddScript($form.showDialog()) | Out-Null
+	$handle = $newThread.BeginInvoke()
+
+	#[void]$Form.ShowDialog()
 	if (($ButtonSave.text -eq "Canceled")) { return "Cancel All" }
 	elseif (($ButtonSave.text -eq "Saved")) { return $tmpobj }
 
